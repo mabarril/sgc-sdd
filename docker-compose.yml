@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sgc-sdd-postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: sgc_user
+      POSTGRES_PASSWORD: sgc_password
+      POSTGRES_DB: sgc_sdd
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

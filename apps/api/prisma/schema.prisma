@@ -1,0 +1,38 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("ADMIN_CLUB") // SQLite does not native-enum, using String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relacionamento 1:1 - Um administrador gerencia no máximo um clube nesta fase.
+  managedClub  Club?    @relation("ClubDirector")
+}
+
+model Club {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  uniqueCode   String   @unique // Código gerado CLB-XXXXXX
+  association  String          // Associação ou Missão regional da IASD
+  localChurch  String          // Igreja local vinculada
+  city         String
+  state        String
+  foundingDate DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Diretor do clube (User)
+  directorId   String   @unique
+  director     User     @relation("ClubDirector", fields: [directorId], references: [id], onDelete: Cascade)
+}
